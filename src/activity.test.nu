@@ -8,7 +8,6 @@ use ./activity.nu open-files
 use ./tests/repo.testlib.nu *
 
 def "test file records retain process context and listing order" [] {
-  # cspell:ignore cwatcher cworker fcwd xignored
   let listing = [
     "n/home/u/src/app/before"
     "p4242"
