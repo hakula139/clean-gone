@@ -1,5 +1,8 @@
 # clean-gone
 
+> [!WARNING]
+> This standalone CLI is retired. Use the maintained [clean-gone skill][workflow] in the hakula-workflow plugin. The documentation below is kept for historical reference.
+
 Remove finished local Git branches and stale linked worktrees after preserving ignored agent memory and plans in the main checkout.
 
 ## Install
