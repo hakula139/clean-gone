@@ -4,7 +4,47 @@
 
 use std/assert
 
+use ./activity.nu open-files
 use ./tests/repo.testlib.nu *
+
+def "test file records retain process context and listing order" [] {
+  let listing = [
+    "n/home/u/src/app/before"
+    "p4242"
+    "cat"
+    "f0"
+    "n/home/u/src/app"
+    "f1"
+    "n/home/u/src/app/first"
+    "ignored"
+    "p5151"
+    "n/home/u/src/app/second"
+    "cash"
+    "n/home/u/src/app/third"
+    "p6262"
+    "c"
+    "n"
+    "n/home/u/src/app/last"
+  ]
+  let expected = [
+    {pid: "", command: "", name: "/home/u/src/app/before"}
+    {pid: "4242", command: "at", name: "/home/u/src/app"}
+    {pid: "4242", command: "at", name: "/home/u/src/app/first"}
+    {pid: "5151", command: "at", name: "/home/u/src/app/second"}
+    {pid: "5151", command: "ash", name: "/home/u/src/app/third"}
+    {pid: "6262", command: "", name: ""}
+    {pid: "6262", command: "", name: "/home/u/src/app/last"}
+  ]
+
+  let files = with-env {
+    PATH: ($env.PATH | prepend $env.NU_TEST_STUBS)
+    STUB_LSOF_OUTPUT: ($listing | str join "\n")
+  } {
+    open-files
+  }
+
+  assert equal $files $expected
+}
 
 def "test a worktree in use is kept even when its branch is finished" [] {
   let live = (live-pid)

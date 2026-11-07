@@ -25,27 +25,22 @@ export def open-files []: nothing -> list {
   }
 
   # `-F pcn` prints a `p` and a `c` line per process, then `f` and `n` lines per file.
-  mut pid = ""
-  mut command = ""
-  mut files: list<record> = []
-  for line in ($listing.stdout | lines) {
+  $listing.stdout
+  | lines
+  | generate {|line, state|
     let value = ($line | str substring 1..)
     match ($line | str substring 0..<1) {
-      "p" => { $pid = $value }
-      "c" => { $command = $value }
+      "p" => { {next: ($state | update pid $value)} }
+      "c" => { {next: ($state | update command $value)} }
       "n" => {
-        $files = (
-          $files
-          | append {
-            pid: $pid
-            command: $command
-            name: $value
-          }
-        )
+        {
+          out: {pid: $state.pid, command: $state.command, name: $value}
+          next: $state
+        }
       }
+      _ => { {next: $state} }
     }
-  }
-  $files
+  } {pid: "", command: ""}
 }
 
 export def holders [files: list<record>, path: string]: nothing -> list<string> {
