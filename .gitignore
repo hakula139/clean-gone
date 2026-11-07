@@ -1,0 +1,11 @@
+# Nix
+/.pre-commit-config.yaml
+.direnv/
+/result
+/result-*
+
+# Assistant local state
+**/.agents/plans/
+**/.claude/agent-memory-local/
+**/.claude/settings.local.json
+/.claude/worktrees/
