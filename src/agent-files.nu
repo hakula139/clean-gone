@@ -7,8 +7,7 @@ use ./output.nu [plural]
 
 const AGENT_DIRS = [".claude/agent-memory-local" ".agents/plans"]
 
-# Copies each ignored file under the agent directories that the main checkout lacks, and appends to
-# each differing copy the lines it lacks, so the main checkout's copies only grow.
+# Plans copies and nonblank line additions without overwriting files in the main checkout.
 export def agent-file-moves [worktree: string, main: string]: nothing -> list<record> {
   (
     nul-list

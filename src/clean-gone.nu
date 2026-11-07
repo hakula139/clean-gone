@@ -3,11 +3,6 @@
 # ==================================================================================================
 # Clean Gone
 # ==================================================================================================
-# Remove finished local branches and stale linked worktrees after moving each worktree's ignored
-# agent memory and plans into the main checkout. Remote branches are never deleted.
-#
-# Run with --help for usage.
-# ==================================================================================================
 
 use ./activity.nu [ancestor-pids open-files]
 use ./cleanup.nu [clean-branch clean-worktree]
@@ -15,25 +10,7 @@ use ./git.nu [git-out local-branches worktree-records]
 use ./output.nu [die]
 use ./requests.nu [configured-origin github-remote remote-parts]
 
-# Remove finished local branches and stale linked worktrees, after moving each worktree's ignored
-# files under `.claude/agent-memory-local/` and `.agents/plans/` into the main checkout without
-# overwriting anything there.
-#
-# It prunes worktrees whose directory is gone, unlocking those locked by an exited session or this
-# one, then checks the rest except the current one. One that a running process or a live session's
-# lock holds is skipped, unless the lock is this session's and the branch is finished.
-#
-# - Finished: the newest request of the branch is merged or closed and contains its tip. The
-#   worktree is removed even with uncommitted work, and the branch is deleted.
-# - Open request: the worktree is kept.
-# - Uncommitted work: the worktree is skipped.
-# - Idle for over a day: a detached worktree is removed when a ref holds its HEAD. A worktree on a
-#   branch is removed, and its branch is deleted when every commit is on a remote.
-#
-# A branch checked out nowhere is deleted when it is finished. Without an open request, one whose
-# last commit is over a day old is deleted when every commit is on a remote and skipped otherwise,
-# as is a gone upstream with unpublished commits. Remote branches are never deleted. Exits with
-# status 1 when anything is skipped.
+# Remove finished local branches and stale linked worktrees after preserving ignored agent files.
 def main [
   --dry-run # Report the plan without changing anything
 ] {

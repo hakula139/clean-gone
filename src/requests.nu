@@ -88,11 +88,8 @@ export def github-remote [parts: record]: nothing -> bool {
   $host in $GITHUB_HOSTS
 }
 
-# Whether the requests on `origin` from `branch` make it `open`, `finished`, or `unfinished`, or the
-# `problem` that leaves it unknown. Any open request keeps it open. Otherwise it is finished when
-# its newest request is merged or closed and that request's head contains the branch tip, since a
-# later tip holds unreviewed work. `gh` reads the requests from the context's slug, since it cannot
-# resolve a remote that `insteadOf` rewrites.
+# Returns `open`, `finished`, or `unfinished` in `state`, or `problem` when the lookup fails.
+# The context's GitHub slug avoids `gh` resolving remotes rewritten by `insteadOf`.
 export def branch-status [branch: string, context: record]: nothing -> record {
   let run = (
     if $context.github {

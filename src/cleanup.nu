@@ -10,8 +10,7 @@ use ./requests.nu [branch-status]
 
 const IDLE_AFTER = 1day
 
-# Prints `git ...args` under `subject` as a PLAN line in a dry run, and otherwise runs it and prints
-# it as a DONE line. Returns whether it succeeded.
+# Returns whether the Git command succeeded, treating a dry run as success.
 def --wrapped step [subject: string, dry_run: bool, ...args: string]: nothing -> bool {
   let text = (["git"] ++ $args | str join " ")
   if $dry_run {
@@ -28,8 +27,7 @@ def --wrapped step [subject: string, dry_run: bool, ...args: string]: nothing ->
   true
 }
 
-# Removes `worktree` for `reason` after moving its agent files, deleting its branch with `--delete`
-# and its uncommitted work with `--force`. Returns `clean` or `skip`.
+# Preserves ignored agent files before removal. Returns `clean` or `skip`.
 def remove-worktree [
   worktree: record
   lock: record
@@ -61,7 +59,7 @@ def remove-worktree [
   "clean"
 }
 
-# Cleans a linked worktree as `main`'s help describes. Returns `clean`, `skip`, or `keep`.
+# Returns `clean`, `skip`, or `keep` after applying the worktree cleanup rules.
 export def clean-worktree [worktree: record, context: record]: nothing -> string {
   let path = $worktree.path
   let lock = (lock-state $worktree.locked $context)
@@ -153,7 +151,7 @@ export def clean-worktree [worktree: record, context: record]: nothing -> string
   remove-worktree $worktree $lock $context $"($reason). Review whether it needs an MR."
 }
 
-# Cleans an unchecked-out branch as `main`'s help describes. Returns `clean`, `skip`, or `keep`.
+# Returns `clean`, `skip`, or `keep` after applying the branch cleanup rules.
 export def clean-branch [branch: record, context: record]: nothing -> string {
   let name = $branch.name
   let status = (branch-status $name $context)

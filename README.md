@@ -38,13 +38,15 @@ clean-gone --dry-run
 clean-gone
 ```
 
-The command applies cleanup by default. `--dry-run` reports `PLAN` actions without changing files, locks, worktrees, or refs. See `clean-gone --help` for the cleanup rules.
+The command applies cleanup by default. `--dry-run` reports `PLAN` actions without changing files, locks, worktrees, or refs.
 
 ## Safety
 
-- A finished branch has no open request, and its newest PR or MR is merged or closed with a head that contains the local tip. Its worktree may be removed even with uncommitted work.
+- The main checkout and current worktree are kept. Entries whose directory is gone are pruned, releasing locks from exited sessions or the calling session when needed.
+- A finished branch has no open request, and its newest PR or MR is merged or closed with a head that contains the local tip. Its branch and worktree are removed even with uncommitted work. Open requests keep their branches and worktrees.
 - Running processes and other live sessions' locks protect a worktree. A lock belonging to the calling session can be released when the branch is finished. A failed process listing stops the run.
-- An unfinished worktree with uncommitted files is skipped. Clean worktrees idle for more than a day can be removed. A branch with unpublished commits stays, and a detached HEAD must be reachable from another ref.
+- An unfinished worktree with uncommitted files is skipped. A clean worktree is removed when its last commit and index update are both over a day old. A detached HEAD must be reachable from another ref. Its branch is deleted only when every commit is on a remote, otherwise the branch stays.
+- A branch checked out nowhere is deleted when finished. Without an open request, it is also deleted when its last commit is over a day old and every commit is on a remote. Unpublished commits cause a skip when the branch is that old or its upstream is gone.
 - Before removal, ignored regular files under `.claude/agent-memory-local/` and `.agents/plans/` are copied to the main checkout when absent. Existing files gain only missing nonblank lines. Remote branches and forge requests are never modified.
 
 `SKIP` lines explain items that need attention, and the process exits with status 1 when any item is skipped. Explicit fatal safety checks exit with status 2. A successful sweep exits with status 0. Follow up on the review hint before discarding skipped work.
