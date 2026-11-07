@@ -1,3 +1,52 @@
 # clean-gone
 
 Remove finished local Git branches and stale linked worktrees after preserving ignored agent memory and plans in the main checkout.
+
+## Install
+
+With Nix flakes enabled:
+
+```bash
+nix profile install github:hakula139/clean-gone
+```
+
+Or run without installing:
+
+```bash
+nix run github:hakula139/clean-gone -- --help
+```
+
+The package supplies Nushell, Git, lsof, OpenSSH, and GNU coreutils on `aarch64-darwin`, `aarch64-linux`, and `x86_64-linux`. Supply an authenticated `gh` for GitHub or `glab` for GitLab on your own PATH. Keeping the forge CLI on your PATH preserves host authentication wrappers. The flake also exports `packages.<system>.clean-gone` and `overlays.default`.
+
+To run a clone directly, install Nushell 0.116 or later and those runtime tools. From the repository you want to clean, pass the absolute path to the clone's entry file:
+
+```bash
+nu --no-config-file /path/to/clean-gone/src/clean-gone.nu --dry-run
+```
+
+Keep its sibling modules alongside it.
+
+The [agent workflow skill][workflow] is maintained and distributed by plugins.
+
+## Usage
+
+Run inside the repository to sweep. Refresh remote-tracking refs before cleanup because unpublished-commit checks use local remote-tracking state. Stop if a required fetch fails.
+
+```bash
+git fetch --all --prune
+clean-gone --dry-run
+clean-gone
+```
+
+The command applies cleanup by default. `--dry-run` reports `PLAN` actions without changing files, locks, worktrees, or refs. See `clean-gone --help` for the cleanup rules.
+
+## Safety
+
+- A finished branch has no open request, and its newest PR or MR is merged or closed with a head that contains the local tip. Its worktree may be removed even with uncommitted work.
+- Running processes and other live sessions' locks protect a worktree. A lock belonging to the calling session can be released when the branch is finished. A failed process listing stops the run.
+- An unfinished worktree with uncommitted files is skipped. Clean worktrees idle for more than a day can be removed. A branch with unpublished commits stays, and a detached HEAD must be reachable from another ref.
+- Before removal, ignored regular files under `.claude/agent-memory-local/` and `.agents/plans/` are copied to the main checkout when absent. Existing files gain only missing nonblank lines. Remote branches and forge requests are never modified.
+
+`SKIP` lines explain items that need attention, and the process exits with status 1 when any item is skipped. Explicit fatal safety checks exit with status 2. A successful sweep exits with status 0. Follow up on the review hint before discarding skipped work.
+
+[workflow]: https://github.com/hakula139/plugins/tree/main/plugins/hakula-workflow/skills/clean-gone
