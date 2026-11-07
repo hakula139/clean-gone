@@ -3,7 +3,7 @@
 # ==================================================================================================
 
 {
-  description = "clean-gone packages and development environment";
+  description = "clean-gone repository development environment";
 
   nixConfig = {
     extra-substituters = [ "https://hakula.cachix.org" ];
@@ -33,42 +33,13 @@
       devkit,
       ...
     }:
-    let
-      inherit (nixpkgs) lib;
-
-      mkCleanGone =
-        pkgs:
-        (devkit.lib.mkLib pkgs).mkNuApplication {
-          pname = "clean-gone";
-          version = "0.1.0";
-          src = ./src;
-          runtimeInputs = with pkgs; [
-            coreutils
-            git
-            lsof
-            openssh
-          ];
-          meta = {
-            description = "Remove finished local Git branches and stale linked worktrees";
-            homepage = "https://github.com/hakula139/clean-gone";
-            license = lib.licenses.mit;
-            platforms = lib.platforms.unix;
-          };
-        };
-    in
-    {
-      overlays.default = final: _: { clean-gone = mkCleanGone final; };
-    }
-    // devkit.lib.eachSystem devkit.lib.systems (
+    devkit.lib.eachSystem devkit.lib.systems (
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
         dk = devkit.lib.mkLib pkgs;
-        cleanGone = mkCleanGone pkgs;
-
         preCommit = dk.preCommit {
           src = ./.;
-          hooks.nu-check.enable = true;
         };
       in
       {
@@ -77,21 +48,7 @@
         # ------------------------------------------------------------------------------------------
         devShells.default = pkgs.mkShell {
           name = "clean-gone-dev";
-          packages = [
-            dk.nushell
-            dk.nu-test
-            pkgs.git
-            pkgs.git-cliff
-          ];
           inputsFrom = [ preCommit.shell ];
-        };
-
-        # ------------------------------------------------------------------------------------------
-        # Packages
-        # ------------------------------------------------------------------------------------------
-        packages = {
-          default = cleanGone;
-          clean-gone = cleanGone;
         };
 
         # ------------------------------------------------------------------------------------------
@@ -99,11 +56,6 @@
         # ------------------------------------------------------------------------------------------
         checks = {
           pre-commit = preCommit.check;
-          package = cleanGone;
-          tests = dk.nuTests {
-            src = ./src;
-            runtimeInputs = [ pkgs.git ];
-          };
         };
 
         # ------------------------------------------------------------------------------------------
