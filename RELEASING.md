@@ -1,6 +1,6 @@
 # Releasing
 
-Follow [devkit's release procedure](https://github.com/hakula139/devkit/blob/44782b619d0c4cd9562c5000f6230aa9582e67ac/docs/releasing.md#cut-a-release) with the contracts below.
+Follow [devkit's release procedure](https://github.com/hakula139/devkit/blob/61682dd34d15732234bac835f3603de8de5b86f1/docs/releasing.md#cut-a-release) with the contracts below.
 
 ## Compatibility
 
@@ -17,4 +17,4 @@ The agent workflow skill has its own plugin version and is maintained in [plugin
 
 The reusable release workflow requires `CACHIX_AUTH_TOKEN` in repository secrets. Configure it through the hosting platform without copying its value into the repository.
 
-To restore a published tag's cache pin, run `gh workflow run nix-cache.yml --ref vX.Y.Z`. Follow [devkit's republish procedure](https://github.com/hakula139/devkit/blob/44782b619d0c4cd9562c5000f6230aa9582e67ac/docs/releasing.md#republish-release-notes) to refresh GitHub Release notes from a corrected changelog.
+To restore a published tag's cache pin, run `gh workflow run nix-cache.yml --ref vX.Y.Z`. Follow [devkit's republish procedure](https://github.com/hakula139/devkit/blob/61682dd34d15732234bac835f3603de8de5b86f1/docs/releasing.md#republish-release-notes) to refresh GitHub Release notes from a corrected changelog.

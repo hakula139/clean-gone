@@ -13,7 +13,7 @@ clean-gone is a Nushell command that removes finished local Git branches and sta
 - Add accepted project words to `.cspell/words.txt`.
 - Keep public issues, PRs, and documentation self-contained and link only public material.
 
-General Nushell conventions live in the [Nushell skill](https://github.com/hakula139/plugins/blob/main/plugins/hakula-languages/skills/nushell/SKILL.md). Read [devkit's CI guide](https://github.com/hakula139/devkit/blob/44782b619d0c4cd9562c5000f6230aa9582e67ac/README.md#adopt-the-ci-workflow-and-the-gate) before changing CI and [RELEASING.md](RELEASING.md) before a release.
+General Nushell conventions live in the [Nushell skill](https://github.com/hakula139/plugins/blob/main/plugins/hakula-languages/skills/nushell/SKILL.md). Read [devkit's CI guide](https://github.com/hakula139/devkit/blob/61682dd34d15732234bac835f3603de8de5b86f1/README.md#adopt-the-ci-workflow-and-the-gate) before changing CI and [RELEASING.md](RELEASING.md) before a release.
 
 ## Verification
 
