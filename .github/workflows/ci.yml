@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  nix:
+    uses: hakula139/devkit/.github/workflows/nix.yml@61682dd34d15732234bac835f3603de8de5b86f1
+    secrets:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+  result:
+    name: CI Result
+    # A skipped required check passes, so the gate must run after failures too.
+    if: ${{ !cancelled() }}
+    needs: [nix]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: read
+    steps:
+      - name: Check results
+        uses: hakula139/devkit/actions/ci-result@61682dd34d15732234bac835f3603de8de5b86f1
