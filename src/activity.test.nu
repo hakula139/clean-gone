@@ -11,15 +11,15 @@ def "test file records retain process context and listing order" [] {
   let listing = [
     "n/home/u/src/app/before"
     "p4242"
-    "cworker"
-    "fcwd"
+    "cat"
+    "f0"
     "n/home/u/src/app"
     "f1"
     "n/home/u/src/app/first"
-    "xignored"
+    "ignored"
     "p5151"
     "n/home/u/src/app/second"
-    "cwatcher"
+    "cash"
     "n/home/u/src/app/third"
     "p6262"
     "c"
@@ -28,10 +28,10 @@ def "test file records retain process context and listing order" [] {
   ]
   let expected = [
     {pid: "", command: "", name: "/home/u/src/app/before"}
-    {pid: "4242", command: "worker", name: "/home/u/src/app"}
-    {pid: "4242", command: "worker", name: "/home/u/src/app/first"}
-    {pid: "5151", command: "worker", name: "/home/u/src/app/second"}
-    {pid: "5151", command: "watcher", name: "/home/u/src/app/third"}
+    {pid: "4242", command: "at", name: "/home/u/src/app"}
+    {pid: "4242", command: "at", name: "/home/u/src/app/first"}
+    {pid: "5151", command: "at", name: "/home/u/src/app/second"}
+    {pid: "5151", command: "ash", name: "/home/u/src/app/third"}
     {pid: "6262", command: "", name: ""}
     {pid: "6262", command: "", name: "/home/u/src/app/last"}
   ]

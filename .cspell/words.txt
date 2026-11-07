@@ -1,11 +1,8 @@
 cachix
 coreutils
-cwatcher
-cworker
 devkit
 direnv
 editorconfig
-fcwd
 gitignore
 glab
 hakula
@@ -31,4 +28,3 @@ unreviewed
 unspanned
 worktree
 worktrees
-xignored
